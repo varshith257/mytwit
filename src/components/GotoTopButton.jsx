@@ -1,0 +1,72 @@
+import React, { useEffect, useState } from 'react';
+import { Button, useColorMode } from '@chakra-ui/react';
+import { FaArrowUp } from 'react-icons/fa';
+import styles from '../components/GotoTopButton.css';
+
+const GoToTopButton = () => {
+  const [showButton, setShowButton] = useState(false);
+  const [stopPosition, setStopPosition] = useState(false);
+  const { colorMode } = useColorMode(); // Access the current color mode (light or dark)
+
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const stopPosition = 960;
+
+    setShowButton(scrollY > 5);
+
+    if (scrollY > stopPosition) {
+      setStopPosition(true);
+    } else {
+      setStopPosition(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const arrowColor = colorMode === 'dark' ? 'white' : 'white'; 
+  const colorScheme = colorMode === 'dark' ? 'black' : '#ecc94b';
+  const hoverColor = colorMode === 'dark' ? 'gray.500' : 'yellow.400';  
+
+  const buttonStyle = {
+    position: 'fixed',
+    bottom: stopPosition ? '90px' : '15px',
+    right: '16px',
+    backgroundColor: colorScheme,
+    colorScheme: 'yellow',
+    _hover: hoverColor,
+    borderRadius: '30px',
+    padding: '10px',
+    zIndex: '60',
+    transition: 'bottom 0.4s ease-in-out',
+  };
+
+  return (
+    <>
+      {showButton && (
+        <Button
+          size="lg"
+          onClick={scrollToTop}
+          className={styles.gototopbutton}
+          style={buttonStyle}
+        >
+          <FaArrowUp color={arrowColor} /> 
+        </Button>
+      )}
+    </>
+  );
+};
+
+export default GoToTopButton;
